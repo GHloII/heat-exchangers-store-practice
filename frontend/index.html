@@ -6,6 +6,7 @@
     <title>Heat Exchangers Store</title>
     <link rel="stylesheet" href="common-ui.css">
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="header.css">
 </head>
 <body>
     <div class="container">
@@ -13,15 +14,18 @@
         <header class="header">
             <div class="header-content">
                 <div class="logo">
-                    <h1>Heat Exchangers Store</h1>
+                    <h1><a href="index.html">Heat Exchangers Store</a></h1>
                 </div>
                 <div class="search">
                     <input type="text" placeholder="Поиск теплообменников..." class="search-input">
                     <button class="search-btn">Найти</button>
                 </div>
                 <div class="header-actions">
-                    <button class="cart-btn">Корзина</button>
-                    <button class="profile-btn">
+                    <a href="cart.html" class="cart-btn" style="text-decoration:none;display:inline-block;">
+                        Корзина
+                        <span class="cart-indicator hidden">0</span>
+                    </a>
+                    <button class="profile-btn" onclick="window.location.href='profile.html'">
                         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align: middle; margin-right: 6px;"><circle cx="10" cy="7" r="4" stroke="currentColor" stroke-width="2"/><path d="M3 17c0-2.7614 3.134-5 7-5s7 2.2386 7 5" stroke="currentColor" stroke-width="2"/></svg>
                         Профиль
                     </button>
@@ -112,7 +116,7 @@
                 <!-- Сетка товаров -->
                 <div class="products-grid">
                     <!-- Товар 1 -->
-                    <div class="product-card">
+                    <div class="product-card" data-id="product1">
                         <div class="product-image">
                             <img src="https://ir-8.ozone.ru/s3/multimedia-r/wc1000/6716284587.jpg" alt="Теплообменник">
                         </div>
@@ -124,7 +128,7 @@
                     </div>
 
                     <!-- Товар 2 -->
-                    <div class="product-card">
+                    <div class="product-card" data-id="product2">
                         <div class="product-image">
                             <img src="https://ir-8.ozone.ru/s3/multimedia-1-b/wc1000/7505877791.jpg" alt="Теплообменник">
                         </div>
@@ -136,7 +140,7 @@
                     </div>
 
                     <!-- Товар 3 -->
-                    <div class="product-card">
+                    <div class="product-card" data-id="product3">
                         <div class="product-image">
                             <img src="https://ir-8.ozone.ru/s3/multimedia-1-q/wc1000/7285957298.jpg" alt="Теплообменник">
                         </div>
@@ -148,7 +152,7 @@
                     </div>
 
                     <!-- Товар 4 -->
-                    <div class="product-card">
+                    <div class="product-card" data-id="product4">
                         <div class="product-image">
                             <img src="https://via.placeholder.com/200x150" alt="Теплообменник">
                         </div>
@@ -164,5 +168,38 @@
     </div>
     
     <script src="script.js"></script>
+
+    <!-- Модальное окно для входа/регистрации -->
+    <div class="modal-overlay" id="authModal" style="display:none;">
+        <div class="modal">
+            <button class="modal-close" id="closeAuthModal">×</button>
+            <div class="modal-tabs">
+                <button class="modal-tab active" id="loginTab">Вход</button>
+                <button class="modal-tab" id="registerTab">Регистрация</button>
+            </div>
+            <div class="modal-content">
+                <!-- Вход -->
+                <form class="auth-form" id="loginForm">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" name="loginEmail" required placeholder="Email" class="number-input" autocomplete="username">
+                    <label for="loginPassword">Пароль</label>
+                    <input type="password" id="loginPassword" name="password" required placeholder="Пароль" class="number-input" autocomplete="current-password">
+                    <button type="submit" class="apply-filters" style="width:100%;margin-top:0.7rem;">Войти</button>
+                </form>
+                <!-- Регистрация -->
+                <form class="auth-form" id="modalRegisterForm" style="display:none;">
+                    <label for="regName">Имя</label>
+                    <input type="text" id="regName" name="regName" required placeholder="Ваше имя" class="number-input" autocomplete="name">
+                    <label for="regEmail">Email</label>
+                    <input type="email" id="regEmail" name="regEmail" required placeholder="Email" class="number-input" autocomplete="email">
+                    <label for="regPassword">Пароль</label>
+                    <input type="password" id="regPassword" name="regPassword" required placeholder="Пароль" class="number-input" autocomplete="new-password">
+                    <label for="regConfirmPassword">Подтвердите пароль</label>
+                    <input type="password" id="regConfirmPassword" name="regConfirmPassword" required placeholder="Повторите пароль" class="number-input" autocomplete="new-password">
+                    <button type="submit" class="apply-filters" style="width:100%;margin-top:0.7rem;">Зарегистрироваться</button>
+                </form>
+            </div>
+        </div>
+    </div>
 </body>
 </html> 
