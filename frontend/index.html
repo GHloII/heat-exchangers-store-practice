@@ -4,14 +4,202 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Heat Exchangers Store</title>
+    <link rel="stylesheet" href="common-ui.css">
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="header.css">
 </head>
 <body>
-    <div id="app">
-        <h1>Heat Exchangers Store</h1>
-        <p>Добро пожаловать в магазин теплообменников</p>
+    <div class="container">
+        <!-- Header с поиском -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <h1><a href="index.html">Heat Exchangers Store</a></h1>
+                </div>
+                <div class="search">
+                    <input type="text" placeholder="Поиск теплообменников..." class="search-input">
+                    <button class="search-btn">Найти</button>
+                </div>
+                <div class="header-actions">
+                    <a href="cart.html" class="cart-btn" style="text-decoration:none;display:inline-block;">
+                        Корзина
+                        <span class="cart-indicator hidden">0</span>
+                    </a>
+                    <button class="profile-btn" onclick="window.location.href='profile.html'">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align: middle; margin-right: 6px;"><circle cx="10" cy="7" r="4" stroke="currentColor" stroke-width="2"/><path d="M3 17c0-2.7614 3.134-5 7-5s7 2.2386 7 5" stroke="currentColor" stroke-width="2"/></svg>
+                        Профиль
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Основной контент -->
+        <main class="main-content">
+            <!-- Левая панель с фильтрами -->
+            <aside class="filters-sidebar">
+                <div class="filters-section">
+                    <h3>Фильтры</h3>
+                    
+                    <div class="filter-group">
+                        <h4>Производитель</h4>
+                        <label><input type="checkbox" value="German"> German</label>
+                        <label><input type="checkbox" value="Danfoss"> Danfoss</label>
+                        <label><input type="checkbox" value="Alfa Laval"> Alfa Laval</label>
+                        <label><input type="checkbox" value="SWEP"> SWEP</label>
+                    </div>
+
+                    <div class="filter-group">
+                        <h4>Цена (₽)</h4>
+                        <div class="dual-range-slider">
+                            <div class="range-track">
+                                <input type="range" id="priceMin" min="0" max="200000" value="0" class="range-input range-min">
+                                <input type="range" id="priceMax" min="0" max="200000" value="200000" class="range-input range-max">
+                            </div>
+                            <div class="range-values">
+                                <span id="priceMinValue">0 ₽</span>
+                                <span id="priceMaxValue">200 000 ₽</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="filter-group">
+                        <h4>Рабочее давление (бар)</h4>
+                        <div class="dual-range-slider">
+                            <div class="range-track">
+                                <input type="range" id="pressureMin" min="0" max="25" value="0" class="range-input range-min">
+                                <input type="range" id="pressureMax" min="0" max="25" value="25" class="range-input range-max">
+                            </div>
+                            <div class="range-values">
+                                <span id="pressureMinValue">0 бар</span>
+                                <span id="pressureMaxValue">25 бар</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="filter-group">
+                        <h4>Диаметр (мм)</h4>
+                        <div class="range-inputs">
+                            <input type="number" id="diameterMin" placeholder="От" min="0" max="1000" class="number-input">
+                            <span>-</span>
+                            <input type="number" id="diameterMax" placeholder="До" min="0" max="1000" class="number-input">
+                        </div>
+                    </div>
+
+                    <div class="filter-group">
+                        <h4>Температура (°C)</h4>
+                        <div class="range-inputs">
+                            <input type="number" id="tempMin" placeholder="От" min="-100" max="300" class="number-input">
+                            <span>-</span>
+                            <input type="number" id="tempMax" placeholder="До" min="-100" max="300" class="number-input">
+                        </div>
+                    </div>
+
+                    <button class="apply-filters">Применить фильтры</button>
+                </div>
+            </aside>
+
+            <!-- Центральная область с товарами -->
+            <section class="products-section">
+                <div class="products-header">
+                    <h2>Теплообменники</h2>
+                    <div class="sort-controls">
+                        <button class="filters-toggle" id="filtersToggle">Фильтры</button>
+                        <select class="sort-select">
+                            <option>По популярности</option>
+                            <option>По цене (возрастание)</option>
+                            <option>По цене (убывание)</option>
+                            <option>По названию</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Сетка товаров -->
+                <div class="products-grid">
+                    <!-- Товар 1 -->
+                    <div class="product-card" data-id="product1">
+                        <div class="product-image">
+                            <img src="https://ir-8.ozone.ru/s3/multimedia-r/wc1000/6716284587.jpg" alt="Теплообменник">
+                        </div>
+                        <div class="product-info">
+                            <h3>Пластинчатый теплообменник ПТ-100, 50 кВт, нержавеющая сталь</h3>
+                            <div class="product-price">125 000 ₽</div>
+                            <button class="add-to-cart">В корзину</button>
+                        </div>
+                    </div>
+
+                    <!-- Товар 2 -->
+                    <div class="product-card" data-id="product2">
+                        <div class="product-image">
+                            <img src="https://ir-8.ozone.ru/s3/multimedia-1-b/wc1000/7505877791.jpg" alt="Теплообменник">
+                        </div>
+                        <div class="product-info">
+                            <h3>Кожухотрубный теплообменник КТ-200, 100 кВт, углеродистая сталь</h3>
+                            <div class="product-price">180 000 ₽</div>
+                            <button class="add-to-cart">В корзину</button>
+                        </div>
+                    </div>
+
+                    <!-- Товар 3 -->
+                    <div class="product-card" data-id="product3">
+                        <div class="product-image">
+                            <img src="https://ir-8.ozone.ru/s3/multimedia-1-q/wc1000/7285957298.jpg" alt="Теплообменник">
+                        </div>
+                        <div class="product-info">
+                            <h3>Воздушный теплообменник ВТ-50, 25 кВт, алюминий</h3>
+                            <div class="product-price">75 000 ₽</div>
+                            <button class="add-to-cart">В корзину</button>
+                        </div>
+                    </div>
+
+                    <!-- Товар 4 -->
+                    <div class="product-card" data-id="product4">
+                        <div class="product-image">
+                            <img src="https://via.placeholder.com/200x150" alt="Теплообменник">
+                        </div>
+                        <div class="product-info">
+                            <h3>Трубчатый теплообменник ТТ-150, 75 кВт, титан</h3>
+                            <div class="product-price">250 000 ₽</div>
+                            <button class="add-to-cart">В корзину</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
     </div>
     
     <script src="script.js"></script>
+
+    <!-- Модальное окно для входа/регистрации -->
+    <div class="modal-overlay" id="authModal" style="display:none;">
+        <div class="modal">
+            <button class="modal-close" id="closeAuthModal">×</button>
+            <div class="modal-tabs">
+                <button class="modal-tab active" id="loginTab">Вход</button>
+                <button class="modal-tab" id="registerTab">Регистрация</button>
+            </div>
+            <div class="modal-content">
+                <!-- Вход -->
+                <form class="auth-form" id="loginForm">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" name="loginEmail" required placeholder="Email" class="number-input" autocomplete="username">
+                    <label for="loginPassword">Пароль</label>
+                    <input type="password" id="loginPassword" name="password" required placeholder="Пароль" class="number-input" autocomplete="current-password">
+                    <button type="submit" class="apply-filters" style="width:100%;margin-top:0.7rem;">Войти</button>
+                </form>
+                <!-- Регистрация -->
+                <form class="auth-form" id="modalRegisterForm" style="display:none;">
+                    <label for="regName">Имя</label>
+                    <input type="text" id="regName" name="regName" required placeholder="Ваше имя" class="number-input" autocomplete="name">
+                    <label for="regEmail">Email</label>
+                    <input type="email" id="regEmail" name="regEmail" required placeholder="Email" class="number-input" autocomplete="email">
+                    <label for="regPassword">Пароль</label>
+                    <input type="password" id="regPassword" name="regPassword" required placeholder="Пароль" class="number-input" autocomplete="new-password">
+                    <label for="regConfirmPassword">Подтвердите пароль</label>
+                    <input type="password" id="regConfirmPassword" name="regConfirmPassword" required placeholder="Повторите пароль" class="number-input" autocomplete="new-password">
+                    <button type="submit" class="apply-filters" style="width:100%;margin-top:0.7rem;">Зарегистрироваться</button>
+                </form>
+            </div>
+        </div>
+    </div>
 </body>
 </html> 

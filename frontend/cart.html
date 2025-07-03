@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Корзина | Heat Exchangers Store</title>
+    <link rel="stylesheet" href="common-ui.css">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="header.css">
+    <link rel="stylesheet" href="cart.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <h1><a href="index.html">Heat Exchangers Store</a></h1>
+            </div>
+            <div class="search">
+                <input type="text" placeholder="Поиск теплообменников..." class="search-input">
+                <button class="search-btn">Найти</button>
+            </div>
+            <div class="header-actions">
+                <a href="cart.html" class="cart-btn">
+                    Корзина
+                    <span class="cart-indicator hidden">0</span>
+                </a>
+                <button class="profile-btn" onclick="window.location.href='profile.html'">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align: middle; margin-right: 6px;"><circle cx="10" cy="7" r="4" stroke="currentColor" stroke-width="2"/><path d="M3 17c0-2.7614 3.134-5 7-5s7 2.2386 7 5" stroke="currentColor" stroke-width="2"/></svg>
+                    Профиль
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="cart-container">
+        <div class="cart-title">Корзина</div>
+        <div class="cart-list">
+            <!-- Товары будут загружены динамически -->
+        </div>
+        <div class="cart-summary">
+            <div class="cart-total">Итого: 485 000 ₽</div>
+            <button class="cart-checkout-btn">Оформить заказ</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+    <script src="cart.js"></script>
+</body>
+</html> 
