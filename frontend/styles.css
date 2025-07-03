@@ -13,8 +13,8 @@
 }
 
 body {
-    background-color: #f4f4f4;
-    /* background-color: #FFF7ED; */
+    background-color: #f4f4f4e8;
+    /* background-color: #f1f1e9ad; */
 }
 
 /* Запрет зума на мобильных */
@@ -48,7 +48,7 @@ button {
 
 .header-content {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     gap: 8px;
 }
 
@@ -106,15 +106,39 @@ button {
     border: none;
     cursor: pointer;
     transition: background-color 0.2s ease;
+    position: relative;
 }
 
 .cart-btn:hover, .profile-btn:hover {
     background: var(--primary-hover);
 }
 
-.header-actions {
+/* Индикатор количества товаров в корзине */
+.cart-indicator {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #e74c3c;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
     display: flex;
     align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: bold;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.cart-indicator.hidden {
+    display: none;
+}
+
+.header-actions {
+    display: flex;
+    align-items: stretch;
     gap: 14px;
     margin-left: 12px;
 }
@@ -281,9 +305,9 @@ button {
 /* Products Section */
 .products-section {
     flex: 1;
-    background: white;
+    /* background: white; */
     padding: 15px;
-    border: 1px solid #ddd;
+    /* border: 1px solid #ddd; */
     border-radius: 15px;
     max-width: 100%;
     overflow: hidden;
@@ -321,6 +345,9 @@ button {
     height: 100%;
     border-radius: 15px;
     overflow: hidden;
+    min-width: 200px;
+    background: white;
+
 }
 
 .product-image {
@@ -375,6 +402,44 @@ button {
     background: var(--primary-hover);
 }
 
+/* Кнопки +/- для товаров в корзине */
+.product-qty-controls {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+}
+
+.product-qty-controls.active {
+    display: flex;
+}
+
+.product-qty-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--secondary-color);
+    color: white;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.product-qty-btn:hover {
+    background: var(--secondary-hover);
+}
+
+.product-qty {
+    min-width: 32px;
+    text-align: center;
+    font-size: 1rem;
+    font-weight: bold;
+}
+
 /* Мобильные устройства */
 @media (max-width: 768px) {
     .container {
@@ -383,6 +448,7 @@ button {
     
     .header-content {
         flex-direction: column;
+        
         gap: 10px;
     }
     
@@ -492,6 +558,9 @@ button {
         font-size: 0.95rem;
         padding: 6px 10px;
         height: 32px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
     }
 }
 
@@ -504,6 +573,9 @@ button {
     .cart-btn, .profile-btn, .search-btn {
         min-width: 120px;
         width: auto;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
     }
 }
 
@@ -537,4 +609,94 @@ button {
         grid-template-columns: repeat(4, 1fr);
         gap: 24px;
     }
+}
+
+/* Модальное окно авторизации/регистрации */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.25);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.modal {
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.13);
+    padding: 32px 28px 24px 28px;
+    min-width: 340px;
+    max-width: 95vw;
+    position: relative;
+    border: 1px solid #ddd;
+    animation: modalIn 0.18s cubic-bezier(.4,0,.2,1);
+}
+@keyframes modalIn {
+    from { transform: translateY(40px) scale(0.97); opacity: 0; }
+    to { transform: none; opacity: 1; }
+}
+.modal-close {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #888;
+    cursor: pointer;
+    z-index: 10;
+    transition: color 0.2s;
+}
+.modal-close:hover {
+    color: var(--primary-color);
+}
+.modal-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.2rem;
+    justify-content: center;
+}
+.modal-tab {
+    background: none;
+    border: none;
+    font-size: 1.1rem;
+    padding: 0.5rem 1.2rem;
+    border-radius: 8px 8px 0 0;
+    cursor: pointer;
+    color: #888;
+    border-bottom: 2px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+}
+.modal-tab.active {
+    color: var(--primary-color);
+    border-bottom: 2px solid var(--primary-color);
+    background: #f4f4f4;
+}
+.auth-form label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+}
+.auth-form input {
+    width: 100%;
+    margin-bottom: 1.1rem;
+}
+.auth-form button[type="submit"] {
+    margin-top: 0.5rem;
+}
+@media (max-width: 600px) {
+    .modal {
+        min-width: unset;
+        width: 98vw;
+        padding: 18px 6vw 18px 6vw;
+    }
+}
+
+.cart-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    vertical-align: middle;
+    width: auto;
 } 
