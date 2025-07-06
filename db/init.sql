@@ -3,34 +3,34 @@ CREATE DATABASE heat_exchangers_store;
 USE heat_exchangers_store;
 
 CREATE TABLE IF NOT EXISTS heat_exchangers_devices (
-	device_id INT AUTO_INCREMENT PRIMARY KEY,
-	name VARCHAR(255) NOT NULL,
-	image_path VARCHAR(255),
-	manufacturer VARCHAR(100) NOT NULL,
-	price DECIMAL(10, 2),
-	weight DECIMAL(10, 2),
-	diameter DECIMAL(10, 2),
-	working_pressure DECIMAL(10, 2),
-	min_temp DECIMAL(6, 2),
-	max_temp DECIMAL(6, 2)
+    device_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    image_path VARCHAR(255),
+    manufacturer VARCHAR(100) NOT NULL,
+    price DECIMAL(10, 2),
+    weight DECIMAL(10, 2),
+    diameter DECIMAL(10, 2),
+    working_pressure DECIMAL(10, 2),
+    min_temp DECIMAL(6, 2),
+    max_temp DECIMAL(6, 2)
 );
 
 CREATE TABLE IF NOT EXISTS users (
-	user_id INT AUTO_INCREMENT PRIMARY KEY,
-	password_hash VARCHAR(255) NOT NULL,
-	login VARCHAR(100) NOT NULL UNIQUE,
-	name VARCHAR(100),
-	surname VARCHAR(100)
+    user_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    password VARCHAR(255) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    name VARCHAR(100),
+    surname VARCHAR(100)
 );
 
 CREATE TABLE IF NOT EXISTS cart (
-	id INT AUTO_INCREMENT PRIMARY KEY,
-	user_id INT NOT NULL,
-	device_id INT NOT NULL,
-	added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    device_id BIGINT NOT NULL,
+    added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
-	FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
-	FOREIGN KEY (device_id) REFERENCES heat_exchangers_devices(device_id) ON DELETE CASCADE
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (device_id) REFERENCES heat_exchangers_devices(device_id) ON DELETE CASCADE
 );
 
 INSERT INTO heat_exchangers_devices (
