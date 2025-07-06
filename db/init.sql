@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS users (
     user_id BIGINT AUTO_INCREMENT PRIMARY KEY,
     password VARCHAR(255) NOT NULL,
     email VARCHAR(100) NOT NULL UNIQUE,
-    name VARCHAR(100),
+    username VARCHAR(100),
     surname VARCHAR(100)
 );
 
