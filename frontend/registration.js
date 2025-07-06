@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('registerForm');
 
-    form.addEventListener('submit', function(e) {
+    form.addEventListener('submit', async function(e) {
         e.preventDefault();
         // Очистка старых ошибок
         removeErrors();
@@ -30,10 +30,23 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         if (valid) {
-            // Имитация отправки данных
-            alert('Регистрация успешна!');
-            // Здесь можно отправить данные на сервер через fetch/AJAX
-            form.reset();
+            try {
+                const submitBtn = form.querySelector('button[type="submit"]');
+                submitBtn.textContent = 'Регистрация...';
+                submitBtn.disabled = true;
+                
+                const response = await AuthAPI.signup({ username: name, email, password });
+                AuthAPI.saveToken(response.jwt);
+                
+                alert('Регистрация успешна!');
+                window.location.href = 'profile.html';
+            } catch (error) {
+                alert('Ошибка регистрации: ' + error.message);
+            } finally {
+                const submitBtn = form.querySelector('button[type="submit"]');
+                submitBtn.textContent = 'Зарегистрироваться';
+                submitBtn.disabled = false;
+            }
         }
     });
 
