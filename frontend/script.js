@@ -97,8 +97,8 @@ document.addEventListener('DOMContentLoaded', async function() {
     const loginForm = document.getElementById('loginForm');
     const registerForm = document.getElementById('modalRegisterForm');
 
-    // Открытие модального окна
-    if (profileBtn && authModal) {
+    // Открытие модального окна (только для неавторизованных пользователей)
+    if (profileBtn && authModal && !AuthAPI.isAuthenticated()) {
         profileBtn.addEventListener('click', function() {
             authModal.style.display = 'flex';
             document.body.style.overflow = 'hidden';
@@ -137,9 +137,9 @@ document.addEventListener('DOMContentLoaded', async function() {
             clearAuthForms();
         });
     }
-    // Валидация и имитация входа
+    // Валидация и вход
     if (loginForm) {
-        loginForm.addEventListener('submit', function(e) {
+        loginForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             clearAuthForms();
             const email = loginForm.loginEmail.value.trim();
@@ -154,17 +154,37 @@ document.addEventListener('DOMContentLoaded', async function() {
                 valid = false;
             }
             if (valid) {
-                alert('Вход выполнен!');
-                authModal.style.display = 'none';
-                document.body.style.overflow = '';
-                loginForm.reset();
-                window.location.href = 'profile.html';
+                try {
+                    // Показываем индикатор загрузки
+                    const submitBtn = loginForm.querySelector('button[type="submit"]');
+                    const originalText = submitBtn.textContent;
+                    submitBtn.textContent = 'Вход...';
+                    submitBtn.disabled = true;
+
+                    const response = await AuthAPI.signin({ email, password });
+                    
+                    // Сохраняем токен
+                    AuthAPI.saveToken(response.jwt);
+                    
+                    alert('Вход выполнен успешно!');
+                    authModal.style.display = 'none';
+                    document.body.style.overflow = '';
+                    loginForm.reset();
+                    window.location.href = 'profile.html';
+                } catch (error) {
+                    alert('Ошибка входа: ' + error.message);
+                } finally {
+                    // Восстанавливаем кнопку
+                    const submitBtn = loginForm.querySelector('button[type="submit"]');
+                    submitBtn.textContent = originalText;
+                    submitBtn.disabled = false;
+                }
             }
         });
     }
-    // Валидация и имитация регистрации
+    // Валидация и регистрация
     if (registerForm) {
-        registerForm.addEventListener('submit', function(e) {
+        registerForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             clearAuthForms();
             const name = registerForm.regName.value.trim();
@@ -189,10 +209,35 @@ document.addEventListener('DOMContentLoaded', async function() {
                 valid = false;
             }
             if (valid) {
-                alert('Регистрация успешна!');
-                authModal.style.display = 'none';
-                document.body.style.overflow = '';
-                registerForm.reset();
+                try {
+                    // Показываем индикатор загрузки
+                    const submitBtn = registerForm.querySelector('button[type="submit"]');
+                    const originalText = submitBtn.textContent;
+                    submitBtn.textContent = 'Регистрация...';
+                    submitBtn.disabled = true;
+
+                    const response = await AuthAPI.signup({ 
+                        username: name, 
+                        email, 
+                        password 
+                    });
+                    
+                    // Сохраняем токен
+                    AuthAPI.saveToken(response.jwt);
+                    
+                    alert('Регистрация успешна!');
+                    authModal.style.display = 'none';
+                    document.body.style.overflow = '';
+                    registerForm.reset();
+                    window.location.href = 'profile.html';
+                } catch (error) {
+                    alert('Ошибка регистрации: ' + error.message);
+                } finally {
+                    // Восстанавливаем кнопку
+                    const submitBtn = registerForm.querySelector('button[type="submit"]');
+                    submitBtn.textContent = originalText;
+                    submitBtn.disabled = false;
+                }
             }
         });
     }
@@ -218,6 +263,9 @@ document.addEventListener('DOMContentLoaded', async function() {
 async function initApp() {
     // Основная логика приложения будет здесь
     console.log('Application initialized');
+    
+    // Обновляем UI в зависимости от авторизации
+    updateAuthUI();
     
     // Мобильные фильтры
     initMobileFilters();
@@ -258,9 +306,7 @@ async function fetchAllProducts() {
     try {
         const response = await fetch('/api/products', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: AuthAPI.getAuthHeaders(),
             body: JSON.stringify({}) // Пустой объект для получения всех товаров
         });
 
@@ -281,9 +327,7 @@ async function fetchFilteredProducts(filters) {
     try {
         const response = await fetch('/api/products/filter', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: AuthAPI.getAuthHeaders(),
             body: JSON.stringify(filters)
         });
 
@@ -518,5 +562,34 @@ function updateCartIndicator() {
         indicator.classList.remove('hidden');
     } else {
         indicator.classList.add('hidden');
+    }
+}
+
+// Функция для выхода из системы
+function logout() {
+    AuthAPI.removeToken();
+    alert('Вы вышли из системы');
+    window.location.href = 'index.html';
+}
+
+// Функция для проверки авторизации и обновления UI
+function updateAuthUI() {
+    const profileBtn = document.querySelector('.profile-btn');
+    if (AuthAPI.isAuthenticated()) {
+        if (profileBtn) {
+            profileBtn.textContent = 'Профиль (Выйти)';
+            profileBtn.onclick = logout;
+        }
+    } else {
+        if (profileBtn) {
+            profileBtn.textContent = 'Профиль';
+            profileBtn.onclick = function() {
+                const authModal = document.getElementById('authModal');
+                if (authModal) {
+                    authModal.style.display = 'flex';
+                    document.body.style.overflow = 'hidden';
+                }
+            };
+        }
     }
 } 
