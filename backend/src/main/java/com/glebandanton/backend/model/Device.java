@@ -2,8 +2,10 @@ package com.glebandanton.backend.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
+@Data
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -11,7 +13,7 @@ import lombok.NoArgsConstructor;
 public class Device {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long device_id;
     private String name;
     private String image_path;
     private String manufacturer;
