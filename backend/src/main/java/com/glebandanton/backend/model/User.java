@@ -15,4 +15,5 @@ public class User {
     private String email;
     private String username;
     private String surname;
+    private String role = "USER";
 }

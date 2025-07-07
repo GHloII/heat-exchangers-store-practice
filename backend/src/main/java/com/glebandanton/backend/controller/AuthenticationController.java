@@ -5,6 +5,7 @@ import com.glebandanton.backend.model.User;
 import com.glebandanton.backend.repository.UserRepo;
 import com.glebandanton.backend.request.LoginRequest;
 import com.glebandanton.backend.response.AuthResponse;
+import com.glebandanton.backend.response.UserInfo;
 import com.glebandanton.backend.service.impl.CustomeUserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -32,9 +33,13 @@ public class AuthenticationController {
 
     @PostMapping("/signup")
     public ResponseEntity<AuthResponse> createUserHandler(@RequestBody User user) throws Exception {
+        System.out.println("=== SIGNUP REQUEST RECEIVED ===");
+        System.out.println("Registration attempt for email: " + user.getEmail() + ", username: " + user.getUsername());
+        
         User isUserExist = userRepo.findByEmail(user.getEmail());
 
         if(isUserExist != null){
+            System.out.println("Email already exists: " + user.getEmail());
             throw new Exception("email already exist with another account");
         }
 
@@ -44,33 +49,58 @@ public class AuthenticationController {
         createdUser.setUsername(user.getUsername());
 
         User savedUser = userRepo.save(createdUser);
+        System.out.println("User created: " + savedUser.getUsername() + ", Role: " + savedUser.getRole());
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword());
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         String jwt = JwtProvider.generateToken(authentication);
 
+        // Создаем информацию о пользователе
+        UserInfo userInfo = new UserInfo();
+        userInfo.setUserId(savedUser.getUser_id());
+        userInfo.setEmail(savedUser.getEmail());
+        userInfo.setUsername(savedUser.getUsername());
+        userInfo.setRole(savedUser.getRole());
+
         AuthResponse response = new AuthResponse();
         response.setMessage("signup success");
         response.setJwt(jwt);
+        response.setUser(userInfo);
 
+        System.out.println("Signup successful for user: " + savedUser.getUsername() + " with role: " + savedUser.getRole());
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @PostMapping("/signin")
     public ResponseEntity<AuthResponse> signIN(@RequestBody LoginRequest loginRequest){
+        System.out.println("=== SIGNIN REQUEST RECEIVED ===");
         String username = loginRequest.getEmail();
         String password = loginRequest.getPassword();
+        System.out.println("Login attempt for email: " + username);
 
         Authentication authentication = authenticate(username, password);
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         String jwt = JwtProvider.generateToken(authentication);
 
+        // Получаем информацию о пользователе
+        User user = userRepo.findByEmail(username);
+        System.out.println("User found: " + user.getUsername() + ", Role: " + user.getRole());
+        
+        // Создаем информацию о пользователе
+        UserInfo userInfo = new UserInfo();
+        userInfo.setUserId(user.getUser_id());
+        userInfo.setEmail(user.getEmail());
+        userInfo.setUsername(user.getUsername());
+        userInfo.setRole(user.getRole());
+
         AuthResponse response = new AuthResponse();
         response.setMessage("sign-in success");
         response.setJwt(jwt);
+        response.setUser(userInfo);
 
+        System.out.println("Signin successful for user: " + user.getUsername() + " with role: " + user.getRole());
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 

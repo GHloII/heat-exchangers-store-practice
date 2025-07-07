@@ -38,28 +38,43 @@ class Cart {
     }
 
     static addItem(product) {
+        console.log('Добавление товара в корзину:', product);
         const items = Cart.getItems();
         const idx = items.findIndex(i => i.id === product.id);
         if (idx !== -1) {
             items[idx].qty += 1;
+            console.log(`Увеличено количество товара ${product.name} до ${items[idx].qty}`);
         } else {
             items.push({ ...product, qty: 1 });
+            console.log(`Добавлен новый товар ${product.name} в корзину`);
         }
         Cart.saveItems(items);
+        console.log('Текущее состояние корзины:', items);
     }
 
     static removeItem(id) {
+        console.log('Удаление товара из корзины, ID:', id);
         const items = Cart.getItems();
+        const itemToRemove = items.find(i => i.id === id);
+        if (itemToRemove) {
+            console.log('Удаляется товар:', itemToRemove.name);
+        }
         const filteredItems = items.filter(i => i.id !== id);
         Cart.saveItems(filteredItems);
+        console.log('Товар удален из корзины');
     }
 
     static updateQty(id, qty) {
+        console.log('Обновление количества товара, ID:', id, 'новое количество:', qty);
         const items = Cart.getItems();
         const idx = items.findIndex(i => i.id === id);
         if (idx !== -1) {
+            const oldQty = items[idx].qty;
             items[idx].qty = qty;
             if (items[idx].qty < 1) items[idx].qty = 1;
+            console.log(`Количество товара ${items[idx].name} изменено с ${oldQty} на ${items[idx].qty}`);
+        } else {
+            console.log('Товар с ID', id, 'не найден в корзине');
         }
         Cart.saveItems(items);
     }
@@ -163,8 +178,12 @@ document.addEventListener('DOMContentLoaded', async function() {
 
                     const response = await AuthAPI.signin({ email, password });
                     
-                    // Сохраняем токен
+                    // Сохраняем токен и информацию о пользователе
                     AuthAPI.saveToken(response.jwt);
+                    if (response.user) {
+                        AuthAPI.saveUserInfo(response.user);
+                        console.log('Информация о пользователе сохранена:', response.user);
+                    }
                     
                     alert('Вход выполнен успешно!');
                     authModal.style.display = 'none';
@@ -222,8 +241,12 @@ document.addEventListener('DOMContentLoaded', async function() {
                         password 
                     });
                     
-                    // Сохраняем токен
+                    // Сохраняем токен и информацию о пользователе
                     AuthAPI.saveToken(response.jwt);
+                    if (response.user) {
+                        AuthAPI.saveUserInfo(response.user);
+                        console.log('Информация о пользователе сохранена:', response.user);
+                    }
                     
                     alert('Регистрация успешна!');
                     authModal.style.display = 'none';
@@ -262,24 +285,42 @@ document.addEventListener('DOMContentLoaded', async function() {
 
 async function initApp() {
     // Основная логика приложения будет здесь
-    console.log('Application initialized');
+    console.log('=== ИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ ===');
     
     // Обновляем UI в зависимости от авторизации
+    console.log('Обновление UI авторизации...');
     updateAuthUI();
     
     // Мобильные фильтры
+    console.log('Инициализация мобильных фильтров...');
     initMobileFilters();
     
     // Инициализация фильтров
+    console.log('Инициализация фильтров...');
     initFilters();
     
     // Загружаем все товары при инициализации
+    console.log('Загрузка товаров...');
     try {
         const products = await fetchAllProducts();
+        console.log('Товары успешно загружены, обновление отображения...');
         updateProductsDisplay(products);
+        console.log('Приложение инициализировано успешно');
     } catch (error) {
         console.error('Не удалось загрузить товары:', error);
-        // Если не удалось загрузить с бэкенда, оставляем статические товары
+        // Показываем сообщение пользователю
+        const productsGrid = document.querySelector('.products-grid');
+        if (productsGrid) {
+            productsGrid.innerHTML = `
+                <div style="grid-column: 1 / -1; text-align: center; padding: 40px;">
+                    <h3>Ошибка загрузки товаров</h3>
+                    <p>Не удалось загрузить товары с сервера. Пожалуйста, попробуйте обновить страницу.</p>
+                    <button onclick="location.reload()" style="padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                        Обновить страницу
+                    </button>
+                </div>
+            `;
+        }
     }
 }
 
@@ -305,9 +346,10 @@ function initMobileFilters() {
 async function fetchAllProducts() {
     try {
         const response = await fetch('/api/products', {
-            method: 'POST',
-            headers: AuthAPI.getAuthHeaders(),
-            body: JSON.stringify({}) // Пустой объект для получения всех товаров
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
         });
 
         if (!response.ok) {
@@ -315,6 +357,8 @@ async function fetchAllProducts() {
         }
 
         const products = await response.json();
+        console.log('Получено товаров:', products.length);
+        console.log('Данные товаров с сервера:', products);
         return products;
     } catch (error) {
         console.error('Ошибка при получении всех товаров:', error);
@@ -327,7 +371,9 @@ async function fetchFilteredProducts(filters) {
     try {
         const response = await fetch('/api/products/filter', {
             method: 'POST',
-            headers: AuthAPI.getAuthHeaders(),
+            headers: {
+                'Content-Type': 'application/json'
+            },
             body: JSON.stringify(filters)
         });
 
@@ -336,6 +382,7 @@ async function fetchFilteredProducts(filters) {
         }
 
         const products = await response.json();
+        console.log('Получено отфильтрованных товаров:', products.length);
         return products;
     } catch (error) {
         console.error('Ошибка при получении товаров:', error);
@@ -345,19 +392,27 @@ async function fetchFilteredProducts(filters) {
 
 // Функция для обновления отображения товаров
 function updateProductsDisplay(products) {
+    console.log('Обновление отображения товаров, количество:', products.length);
     const productsGrid = document.querySelector('.products-grid');
-    if (!productsGrid) return;
+    if (!productsGrid) {
+        console.log('Контейнер товаров не найден');
+        return;
+    }
 
     productsGrid.innerHTML = '';
+    console.log('Контейнер товаров очищен');
     
-    products.forEach(product => {
+    products.forEach((product, index) => {
+        console.log(`Создание карточки товара ${index + 1}:`, product);
+        console.log(`Изображение для товара ${product.name}:`, product.image_path || product.image);
+        
         const productCard = document.createElement('div');
         productCard.className = 'product-card';
         productCard.dataset.id = product.id;
         
         productCard.innerHTML = `
             <div class="product-image">
-                <img src="${product.image}" alt="${product.name}">
+                <img src="${product.image_path || product.image}" alt="${product.name}" onload="console.log('Изображение загружено:', '${product.name}')" onerror="console.log('Ошибка загрузки изображения:', '${product.name}', 'URL:', '${product.image_path || product.image}')">
             </div>
             <div class="product-info">
                 <h3>${product.name}</h3>
@@ -369,6 +424,7 @@ function updateProductsDisplay(products) {
         productsGrid.appendChild(productCard);
     });
 
+    console.log('Все карточки товаров созданы, инициализация кнопок...');
     // Переинициализируем кнопки добавления в корзину
     initAddToCartButtons();
 }
@@ -476,28 +532,44 @@ function formatPrice(price) {
 
 // Добавление товара в корзину из магазина
 function initAddToCartButtons() {
+    console.log('Инициализация кнопок добавления в корзину');
     document.querySelectorAll('.product-card').forEach((card) => {
         const btn = card.querySelector('.add-to-cart');
         const product = Product.fromElement(card);
         const productId = product.id;
         
+        // Удаляем старые обработчики событий
+        const newBtn = btn.cloneNode(true);
+        btn.parentNode.replaceChild(newBtn, btn);
+        
         // Проверяем, есть ли товар в корзине
         const qty = Cart.getItemQty(productId);
         updateProductButton(card, qty);
         
-        btn.addEventListener('click', function() {
-            if (qty === 0) {
+        // Добавляем новый обработчик
+        newBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Клик по кнопке добавления в корзину для товара:', product.name);
+            
+            const currentQty = Cart.getItemQty(productId);
+            if (currentQty === 0) {
                 // Добавляем товар в корзину
                 Cart.addItem(product);
                 updateProductButton(card, 1);
                 updateCartIndicator();
+                console.log('Товар успешно добавлен в корзину');
+            } else {
+                console.log('Товар уже в корзине, количество:', currentQty);
             }
         });
     });
+    console.log('Кнопки добавления в корзину инициализированы');
 }
 
 // Обновление кнопки товара (В корзину / +/-)
 function updateProductButton(card, qty) {
+    console.log('Обновление кнопки товара, количество:', qty);
     const btn = card.querySelector('.add-to-cart');
     const qtyControls = card.querySelector('.product-qty-controls');
     
@@ -518,12 +590,14 @@ function updateProductButton(card, qty) {
             controls.querySelector('[data-action="dec"]').addEventListener('click', function() {
                 const product = Product.fromElement(card);
                 const currentQty = Cart.getItemQty(product.id);
+                console.log('Уменьшение количества товара:', product.name, 'с', currentQty, 'до', currentQty - 1);
                 if (currentQty > 1) {
                     Cart.updateQty(product.id, currentQty - 1);
                     updateProductButton(card, currentQty - 1);
                     updateCartIndicator();
                 } else {
                     // Если количество 1, то удаляем товар
+                    console.log('Удаление товара из корзины:', product.name);
                     Cart.removeItem(product.id);
                     updateProductButton(card, 0);
                     updateCartIndicator();
@@ -533,6 +607,7 @@ function updateProductButton(card, qty) {
             controls.querySelector('[data-action="inc"]').addEventListener('click', function() {
                 const product = Product.fromElement(card);
                 const currentQty = Cart.getItemQty(product.id);
+                console.log('Увеличение количества товара:', product.name, 'с', currentQty, 'до', currentQty + 1);
                 Cart.updateQty(product.id, currentQty + 1);
                 updateProductButton(card, currentQty + 1);
                 updateCartIndicator();
@@ -552,35 +627,64 @@ function updateProductButton(card, qty) {
 
 // Обновление индикатора корзины
 function updateCartIndicator() {
+    console.log('Обновление индикатора корзины');
     const indicator = document.querySelector('.cart-indicator');
-    if (!indicator) return;
+    if (!indicator) {
+        console.log('Индикатор корзины не найден');
+        return;
+    }
     
     const totalItems = Cart.getTotalItems();
+    console.log('Общее количество товаров в корзине:', totalItems);
     indicator.textContent = totalItems;
     
     if (totalItems > 0) {
         indicator.classList.remove('hidden');
+        console.log('Индикатор корзины показан');
     } else {
         indicator.classList.add('hidden');
+        console.log('Индикатор корзины скрыт');
     }
 }
 
 // Функция для выхода из системы
 function logout() {
+    console.log('Выход из системы');
     AuthAPI.removeToken();
+    AuthAPI.removeUserInfo();
+    console.log('Токен и информация о пользователе удалены');
     alert('Вы вышли из системы');
     window.location.href = 'index.html';
 }
 
 // Функция для проверки авторизации и обновления UI
 function updateAuthUI() {
+    console.log('Обновление UI авторизации');
     const profileBtn = document.querySelector('.profile-btn');
+    const adminBtn = document.querySelector('.admin-btn');
+    
     if (AuthAPI.isAuthenticated()) {
+        console.log('Пользователь авторизован');
+        const userRole = AuthAPI.getUserRole();
+        console.log('Роль пользователя:', userRole);
+        
         if (profileBtn) {
             profileBtn.textContent = 'Профиль (Выйти)';
             profileBtn.onclick = logout;
         }
+        
+        // Показываем кнопку админа только для пользователей с ролью ADMIN
+        if (adminBtn) {
+            if (AuthAPI.isAdmin()) {
+                console.log('Пользователь является админом, показываем кнопку админа');
+                adminBtn.style.display = 'inline-block';
+            } else {
+                console.log('Пользователь не является админом, скрываем кнопку админа');
+                adminBtn.style.display = 'none';
+            }
+        }
     } else {
+        console.log('Пользователь не авторизован');
         if (profileBtn) {
             profileBtn.textContent = 'Профиль';
             profileBtn.onclick = function() {
@@ -590,6 +694,12 @@ function updateAuthUI() {
                     document.body.style.overflow = 'hidden';
                 }
             };
+        }
+        
+        // Скрываем кнопку админа для неавторизованных пользователей
+        if (adminBtn) {
+            console.log('Пользователь не авторизован, скрываем кнопку админа');
+            adminBtn.style.display = 'none';
         }
     }
 } 

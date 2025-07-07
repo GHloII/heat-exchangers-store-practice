@@ -85,4 +85,32 @@ class AuthAPI {
             'Authorization': token ? `Bearer ${token}` : ''
         };
     }
+
+    // Сохранение информации о пользователе
+    static saveUserInfo(userInfo) {
+        localStorage.setItem('user_info', JSON.stringify(userInfo));
+    }
+
+    // Получение информации о пользователе
+    static getUserInfo() {
+        const userInfo = localStorage.getItem('user_info');
+        return userInfo ? JSON.parse(userInfo) : null;
+    }
+
+    // Удаление информации о пользователе
+    static removeUserInfo() {
+        localStorage.removeItem('user_info');
+    }
+
+    // Проверка, является ли пользователь админом
+    static isAdmin() {
+        const userInfo = this.getUserInfo();
+        return userInfo && userInfo.role === 'ADMIN';
+    }
+
+    // Получение роли пользователя
+    static getUserRole() {
+        const userInfo = this.getUserInfo();
+        return userInfo ? userInfo.role : null;
+    }
 } 
