@@ -1,0 +1,128 @@
+:root {
+    --primary-color: #08807a;
+    --secondary-color: #2633e4c9;
+    --accent-color: #08807a;
+    --primary-hover: #0ba79f;
+    --secondary-hover: #2633e498;
+}
+
+body {
+    font-family: Arial, sans-serif;
+}
+
+/* Убираем подчеркнутость у всех ссылок */
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+button {
+    border-radius: 10px;
+    height: 36px;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 1rem;
+    transition: background-color 0.2s ease;
+}
+
+input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    margin-right: 6px;
+    border-radius: 4px;
+    vertical-align: middle;
+}
+
+input[type="checkbox"]:focus {
+    outline: 2px solid var(--secondary-color);
+    outline-offset: 2px;
+}
+
+input[type="number"],
+input[type="text"],
+.number-input {
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    font-size: 1rem;
+    font-family: inherit;
+    padding: 0.375rem 0.5rem;
+    transition: border-color 0.2s;
+    box-sizing: border-box;
+}
+
+input[type="number"]:focus,
+input[type="text"]:focus,
+.number-input:focus {
+    outline: none;
+    border-color: var(--secondary-color);
+}
+
+input[type="range"] {
+    box-sizing: border-box;
+    padding: 0;
+}
+
+.range-input {
+    padding: 0;
+}
+
+.search-input {
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    font-size: 1rem;
+    font-family: inherit;
+    padding: 0.375rem 0.5rem;
+    transition: border-color 0.2s;
+    box-sizing: border-box;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--secondary-color);
+}
+
+@media (max-width: 768px) {
+    .header-content {
+        flex-direction: column;
+        gap: 10px;
+        align-items: stretch;
+    }
+    .search {
+        width: 100%;
+    }
+    .header-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+}
+
+@media (max-width: 900px) {
+    .header-actions {
+        flex-direction: row;
+        gap: 6px;
+        align-items: center;
+    }
+    .cart-btn, .profile-btn, .search-btn {
+        font-size: 0.95rem;
+        padding: 6px 10px;
+        height: 32px;
+    }
+}
+
+@media (max-width: 600px) {
+    .header-actions {
+        flex-direction: column;
+        gap: 8px;
+        align-items: flex-end;
+    }
+    .cart-btn, .profile-btn, .search-btn {
+        width: 100%;
+        min-width: 120px;
+    }
+} 

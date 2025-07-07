@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ панель - Магазин теплообменников</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .admin-panel {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        
+        .admin-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        .admin-section h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .btn-admin {
+            background: #e74c3c;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        
+        .btn-admin:hover {
+            background: #c0392b;
+        }
+        
+        .btn-success {
+            background: #27ae60;
+        }
+        
+        .btn-success:hover {
+            background: #229954;
+        }
+        
+        .products-list {
+            margin-top: 20px;
+        }
+        
+        .product-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+        
+        .product-info {
+            flex: 1;
+        }
+        
+        .product-actions {
+            display: flex;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-panel">
+        <h1>Админ панель</h1>
+        <p>Добро пожаловать в панель администратора</p>
+        
+        <div class="admin-section">
+            <h3>Добавить новый товар</h3>
+            <form id="addProductForm">
+                <div class="form-group">
+                    <label for="name">Название:</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="image_path">URL изображения:</label>
+                    <input type="url" id="image_path" name="image_path" required>
+                </div>
+                <div class="form-group">
+                    <label for="manufacturer">Производитель:</label>
+                    <input type="text" id="manufacturer" name="manufacturer" required>
+                </div>
+                <div class="form-group">
+                    <label for="price">Цена:</label>
+                    <input type="number" id="price" name="price" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="weight">Вес (кг):</label>
+                    <input type="number" id="weight" name="weight" step="0.1" required>
+                </div>
+                <div class="form-group">
+                    <label for="diameter">Диаметр (мм):</label>
+                    <input type="number" id="diameter" name="diameter" step="0.1" required>
+                </div>
+                <div class="form-group">
+                    <label for="working_pressure">Рабочее давление (бар):</label>
+                    <input type="number" id="working_pressure" name="working_pressure" step="0.1" required>
+                </div>
+                <div class="form-group">
+                    <label for="min_temp">Мин. температура (°C):</label>
+                    <input type="number" id="min_temp" name="min_temp" step="0.1" required>
+                </div>
+                <div class="form-group">
+                    <label for="max_temp">Макс. температура (°C):</label>
+                    <input type="number" id="max_temp" name="max_temp" step="0.1" required>
+                </div>
+                <button type="submit" class="btn-admin btn-success">Добавить товар</button>
+            </form>
+        </div>
+        
+        <div class="admin-section">
+            <h3>Управление товарами</h3>
+            <button onclick="loadProducts()" class="btn-admin">Загрузить товары</button>
+            <div id="productsList" class="products-list"></div>
+        </div>
+    </div>
+
+    <script src="auth-api.js"></script>
+    <script>
+        // Проверяем авторизацию при загрузке
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!AuthAPI.isAuthenticated()) {
+                alert('Необходима авторизация!');
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            // Проверяем роль пользователя (в реальном приложении это должно проверяться на сервере)
+            console.log('Пользователь авторизован');
+        });
+
+        // Обработчик добавления товара
+        document.getElementById('addProductForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const product = {
+                name: formData.get('name'),
+                image_path: formData.get('image_path'),
+                manufacturer: formData.get('manufacturer'),
+                price: parseFloat(formData.get('price')),
+                weight: parseFloat(formData.get('weight')),
+                diameter: parseFloat(formData.get('diameter')),
+                working_pressure: parseFloat(formData.get('working_pressure')),
+                min_temp: parseFloat(formData.get('min_temp')),
+                max_temp: parseFloat(formData.get('max_temp'))
+            };
+            
+            try {
+                const response = await fetch('/api/admin/products', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...AuthAPI.getAuthHeaders()
+                    },
+                    body: JSON.stringify(product)
+                });
+                
+                if (response.ok) {
+                    alert('Товар успешно добавлен!');
+                    e.target.reset();
+                    loadProducts();
+                } else {
+                    const error = await response.text();
+                    alert('Ошибка: ' + error);
+                }
+            } catch (error) {
+                alert('Ошибка: ' + error.message);
+            }
+        });
+
+        // Загрузка товаров
+        async function loadProducts() {
+            try {
+                const response = await fetch('/api/admin/products', {
+                    headers: AuthAPI.getAuthHeaders()
+                });
+                
+                if (response.ok) {
+                    const products = await response.json();
+                    displayProducts(products);
+                } else {
+                    const error = await response.text();
+                    alert('Ошибка загрузки товаров: ' + error);
+                }
+            } catch (error) {
+                alert('Ошибка: ' + error.message);
+            }
+        }
+
+        // Отображение товаров
+        function displayProducts(products) {
+            const container = document.getElementById('productsList');
+            container.innerHTML = '';
+            
+            products.forEach(product => {
+                const item = document.createElement('div');
+                item.className = 'product-item';
+                item.innerHTML = `
+                    <div class="product-info">
+                        <strong>${product.name}</strong> - ${product.manufacturer}<br>
+                        Цена: ${product.price} ₽ | Вес: ${product.weight} кг
+                    </div>
+                    <div class="product-actions">
+                        <button onclick="editProduct(${product.device_id})" class="btn-admin">Редактировать</button>
+                        <button onclick="deleteProduct(${product.device_id})" class="btn-admin">Удалить</button>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        // Удаление товара
+        async function deleteProduct(id) {
+            if (!confirm('Вы уверены, что хотите удалить этот товар?')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/admin/products/${id}`, {
+                    method: 'DELETE',
+                    headers: AuthAPI.getAuthHeaders()
+                });
+                
+                if (response.ok) {
+                    alert('Товар успешно удален!');
+                    loadProducts();
+                } else {
+                    const error = await response.text();
+                    alert('Ошибка удаления: ' + error);
+                }
+            } catch (error) {
+                alert('Ошибка: ' + error.message);
+            }
+        }
+
+        // Редактирование товара (заглушка)
+        function editProduct(id) {
+            alert('Функция редактирования будет добавлена позже');
+        }
+    </script>
+</body>
+</html> 
