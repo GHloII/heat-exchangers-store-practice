@@ -92,57 +92,59 @@
     </style>
 </head>
 <body>
-    <div class="admin-panel">
-        <h1>Админ панель</h1>
-        <p>Добро пожаловать в панель администратора</p>
-        
-        <div class="admin-section">
-            <h3>Добавить новый товар</h3>
-            <form id="addProductForm">
-                <div class="form-group">
-                    <label for="name">Название:</label>
-                    <input type="text" id="name" name="name" required>
-                </div>
-                <div class="form-group">
-                    <label for="image_path">URL изображения:</label>
-                    <input type="url" id="image_path" name="image_path" required>
-                </div>
-                <div class="form-group">
-                    <label for="manufacturer">Производитель:</label>
-                    <input type="text" id="manufacturer" name="manufacturer" required>
-                </div>
-                <div class="form-group">
-                    <label for="price">Цена:</label>
-                    <input type="number" id="price" name="price" step="0.01" required>
-                </div>
-                <div class="form-group">
-                    <label for="weight">Вес (кг):</label>
-                    <input type="number" id="weight" name="weight" step="0.1" required>
-                </div>
-                <div class="form-group">
-                    <label for="diameter">Диаметр (мм):</label>
-                    <input type="number" id="diameter" name="diameter" step="0.1" required>
-                </div>
-                <div class="form-group">
-                    <label for="working_pressure">Рабочее давление (бар):</label>
-                    <input type="number" id="working_pressure" name="working_pressure" step="0.1" required>
-                </div>
-                <div class="form-group">
-                    <label for="min_temp">Мин. температура (°C):</label>
-                    <input type="number" id="min_temp" name="min_temp" step="0.1" required>
-                </div>
-                <div class="form-group">
-                    <label for="max_temp">Макс. температура (°C):</label>
-                    <input type="number" id="max_temp" name="max_temp" step="0.1" required>
-                </div>
-                <button type="submit" class="btn-admin btn-success">Добавить товар</button>
-            </form>
-        </div>
-        
-        <div class="admin-section">
-            <h3>Управление товарами</h3>
-            <button onclick="loadProducts()" class="btn-admin">Загрузить товары</button>
-            <div id="productsList" class="products-list"></div>
+    <div class="container">
+        <div class="admin-panel">
+            <h1>Админ панель</h1>
+            <p>Добро пожаловать в панель администратора</p>
+            
+            <div class="admin-section">
+                <h3>Добавить новый товар</h3>
+                <form id="addProductForm">
+                    <div class="form-group">
+                        <label for="name">Название:</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="image_path">URL изображения:</label>
+                        <input type="url" id="image_path" name="image_path" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="manufacturer">Производитель:</label>
+                        <input type="text" id="manufacturer" name="manufacturer" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="price">Цена:</label>
+                        <input type="number" id="price" name="price" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="weight">Вес (кг):</label>
+                        <input type="number" id="weight" name="weight" step="0.1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="diameter">Диаметр (мм):</label>
+                        <input type="number" id="diameter" name="diameter" step="0.1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="working_pressure">Рабочее давление (бар):</label>
+                        <input type="number" id="working_pressure" name="working_pressure" step="0.1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="min_temp">Мин. температура (°C):</label>
+                        <input type="number" id="min_temp" name="min_temp" step="0.1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="max_temp">Макс. температура (°C):</label>
+                        <input type="number" id="max_temp" name="max_temp" step="0.1" required>
+                    </div>
+                    <button type="submit" class="btn-admin btn-success">Добавить товар</button>
+                </form>
+            </div>
+            
+            <div class="admin-section">
+                <h3>Управление товарами</h3>
+                <button onclick="loadProducts()" class="btn-admin">Загрузить товары</button>
+                <div id="productsList" class="products-list"></div>
+            </div>
         </div>
     </div>
 

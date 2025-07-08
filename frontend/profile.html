@@ -10,33 +10,34 @@
     <link rel="stylesheet" href="profile.css">
 </head>
 <body>
-    <!-- Header -->
-    <header class="header">
-        <div class="header-content">
-            <div class="logo">
-                <h1><a href="index.html">Heat Exchangers Store</a></h1>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <h1><a href="index.html">Heat Exchangers Store</a></h1>
+                </div>
+                <div class="search">
+                    <input type="text" placeholder="Поиск теплообменников..." class="search-input">
+                    <button class="search-btn">Найти</button>
+                </div>
+                <div class="header-actions">
+                    <a href="cart.html" class="cart-btn">Корзина</a>
+                    <button class="profile-btn" onclick="window.location.href='profile.html'">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align: middle; margin-right: 6px;"><circle cx="10" cy="7" r="4" stroke="currentColor" stroke-width="2"/><path d="M3 17c0-2.7614 3.134-5 7-5s7 2.2386 7 5" stroke="currentColor" stroke-width="2"/></svg>
+                        Профиль
+                    </button>
+                </div>
             </div>
-            <div class="search">
-                <input type="text" placeholder="Поиск теплообменников..." class="search-input">
-                <button class="search-btn">Найти</button>
-            </div>
-            <div class="header-actions">
-                <a href="cart.html" class="cart-btn">Корзина</a>
-                <button class="profile-btn" onclick="window.location.href='profile.html'">
-                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align: middle; margin-right: 6px;"><circle cx="10" cy="7" r="4" stroke="currentColor" stroke-width="2"/><path d="M3 17c0-2.7614 3.134-5 7-5s7 2.2386 7 5" stroke="currentColor" stroke-width="2"/></svg>
-                    Профиль
-                </button>
-            </div>
-        </div>
-    </header>
+        </header>
 
-    <div class="profile-container">
-        <div class="profile-avatar">👤</div>
-        <div class="profile-name">Имя пользователя</div>
-        <div class="profile-email">user@email.com</div>
-        <button class="logout-btn" onclick="logout()">Выйти</button>
+        <div class="profile-container">
+            <div class="profile-avatar">👤</div>
+            <div class="profile-name">Имя пользователя</div>
+            <div class="profile-email">user@email.com</div>
+            <button class="logout-btn" onclick="logout()">Выйти</button>
+        </div>
     </div>
-    
     <script src="auth-api.js"></script>
     <script src="script.js"></script>
 </body>

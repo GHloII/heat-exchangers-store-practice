@@ -47,25 +47,23 @@
     </style>
 </head>
 <body>
-    <div class="register-container">
-        <div class="register-title">Регистрация</div>
-        <form class="register-form" id="registerForm">
-            <label for="name">Имя</label>
-            <input type="text" id="name" name="name" required placeholder="Ваше имя" class="number-input">
-
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email" required placeholder="example@email.com" class="number-input">
-
-            <label for="password">Пароль</label>
-            <input type="password" id="password" name="password" required placeholder="Пароль" class="number-input">
-
-            <label for="confirmPassword">Подтвердите пароль</label>
-            <input type="password" id="confirmPassword" name="confirmPassword" required placeholder="Повторите пароль" class="number-input">
-
-            <button type="submit" class="register-btn apply-filters">Зарегистрироваться</button>
-        </form>
-        <div class="register-bottom">
-            Уже есть аккаунт? <a href="index.html">Войти</a>
+    <div class="container">
+        <div class="register-container">
+            <div class="register-title">Регистрация</div>
+            <form class="register-form" id="registerForm">
+                <label for="name">Имя</label>
+                <input type="text" id="name" name="name" required placeholder="Ваше имя" class="number-input">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required placeholder="example@email.com" class="number-input">
+                <label for="password">Пароль</label>
+                <input type="password" id="password" name="password" required placeholder="Пароль" class="number-input">
+                <label for="confirmPassword">Подтвердите пароль</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" required placeholder="Повторите пароль" class="number-input">
+                <button type="submit" class="register-btn apply-filters">Зарегистрироваться</button>
+            </form>
+            <div class="register-bottom">
+                Уже есть аккаунт? <a href="index.html">Войти</a>
+            </div>
         </div>
     </div>
     <script src="auth-api.js"></script>
