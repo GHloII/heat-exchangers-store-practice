@@ -48,10 +48,17 @@ public class AuthenticationController {
         createdUser.setEmail(user.getEmail());
         createdUser.setUsername(user.getUsername());
 
+        // Assign role
+        if (userRepo.count() == 0) {
+            createdUser.setRole("ADMIN");
+        } else {
+            createdUser.setRole("USER");
+        }
+
         User savedUser = userRepo.save(createdUser);
         System.out.println("User created: " + savedUser.getUsername() + ", Role: " + savedUser.getRole());
 
-        Authentication authentication = new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword());
+        Authentication authentication = authenticate(user.getEmail(), user.getPassword());
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         String jwt = JwtProvider.generateToken(authentication);
