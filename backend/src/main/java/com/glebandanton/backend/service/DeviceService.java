@@ -46,6 +46,6 @@ public class DeviceService {
     }
 
     public Optional<Device> readDeviceById(Long id) {
-        return deviceService.findById(id);
+        return deviceRepo.findById(id);
     }
 }
