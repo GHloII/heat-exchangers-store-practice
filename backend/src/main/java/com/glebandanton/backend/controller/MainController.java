@@ -11,7 +11,3 @@ public class MainController {
         return "redirect:/index.html";
     }
 }
-//    @GetMapping("/")
-//    public ResponseEntity<List<Device>> readAllDevices() {
-//        return new ResponseEntity<>(deviceService.readAllDevices(), HttpStatus.OK);
-//    }

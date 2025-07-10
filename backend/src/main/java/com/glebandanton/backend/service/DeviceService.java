@@ -5,32 +5,40 @@ import com.glebandanton.backend.repository.DeviceRepo;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 
 @Service
 @AllArgsConstructor
 public class DeviceService {
-    private final DeviceRepo deviceService;
+    private final DeviceRepo deviceRepo;
 
     public List<Device> readAllDevices(){
-        return deviceService.findAll();
+        return deviceRepo.findAll();
     }
 
     public Device saveDevice(Device device) {
-        return deviceService.save(device);
+        return deviceRepo.save(device);
+    }
+
+    public List<Device> searchDevicesByName(String name) {
+        if (name == null || name.isBlank()) {
+            return Collections.emptyList();
+        }
+        return deviceRepo.findByNameContainingIgnoreCase(name);
     }
 
     public Device updateDevice(Device device) {
-        if (deviceService.existsById(device.getDevice_id())) {
-            return deviceService.save(device);
+        if (deviceRepo.existsById(device.getDevice_id())) {
+            return deviceRepo.save(device);
         } else {
             throw new RuntimeException("Device not found with id: " + device.getDevice_id());
         }
     }
 
     public void deleteDevice(Long id) {
-        if (deviceService.existsById(id)) {
-            deviceService.deleteById(id);
+        if (deviceRepo.existsById(id)) {
+            deviceRepo.deleteById(id);
         } else {
             throw new RuntimeException("Device not found with id: " + id);
         }
