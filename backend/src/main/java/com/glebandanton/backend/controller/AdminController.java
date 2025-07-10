@@ -12,7 +12,7 @@ import java.util.List;
 
 @Data
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/api/admin/products")
 @CrossOrigin(origins = "*")
 @PreAuthorize("hasRole('ADMIN')")
 public class AdminController {

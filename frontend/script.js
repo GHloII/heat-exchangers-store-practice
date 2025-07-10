@@ -93,6 +93,9 @@ document.addEventListener('DOMContentLoaded', async function() {
     // Инициализация приложения
     await initApp();
 
+    // Инициализация поиска
+    initSearch();
+
     // Модальное окно авторизации/регистрации
     const profileBtn = document.querySelector('.profile-btn');
     const authModal = document.getElementById('authModal');
@@ -364,6 +367,23 @@ async function initApp() {
             `;
         }
     }
+
+    const exportBtn = document.getElementById('exportMainCsv');
+    if (exportBtn) {
+        exportBtn.addEventListener('click', () => {
+            const productCards = document.querySelectorAll('.product-card');
+            const productsData = Array.from(productCards).map(card => {
+                return {
+                    id: card.dataset.productId,
+                    name: card.querySelector('h3').textContent,
+                    price: card.querySelector('.product-price').textContent,
+                    image_path: card.querySelector('img').src,
+                    manufacturer: card.dataset.manufacturer || '',
+                };
+            });
+            AuthAPI.exportToCSV(productsData, 'filtered-products.csv');
+        });
+    }
 }
 
 function initMobileFilters() {
@@ -443,35 +463,38 @@ function updateProductsDisplay(products) {
     }
     productsGrid.innerHTML = '';
     console.log('[LOG] Контейнер товаров очищен');
-    products.forEach((product, index) => {
-        console.log(`[LOG] Создание карточки товара ${index + 1}:`, product);
-        const productCard = document.createElement('div');
-        productCard.className = 'product-card';
-        productCard.dataset.id = product.id;
-        productCard.innerHTML = `
+    products.forEach(product => {
+        const card = document.createElement('div');
+        card.className = 'product-card';
+        card.dataset.productId = product.id; // Убедимся, что ID сохраняется
+        card.dataset.manufacturer = product.manufacturer; 
+
+        const price = formatPrice(product.price);
+
+        card.innerHTML = `
             <div class="product-image">
                 <img src="${product.image_path || product.image}" alt="${product.name}">
             </div>
             <div class="product-info">
                 <h3>${product.name}</h3>
-                <div class="product-price">${product.price.toLocaleString()} ₽</div>
+                <div class="product-price">${price} ₽</div>
                 <button class="add-to-cart">В корзину</button>
             </div>
             ${product.description ? `<div class="product-description" style="display:none;">${product.description}</div>` : ''}
         `;
         // Новый обработчик: только по фото и названию
-        productCard.querySelector('.product-image').addEventListener('click', function(e) {
+        card.querySelector('.product-image').addEventListener('click', function(e) {
             e.stopPropagation();
             const url = `product-card.html?id=${product.id}`;
             window.location.href = url;
         });
-        productCard.querySelector('h3').addEventListener('click', function(e) {
+        card.querySelector('h3').addEventListener('click', function(e) {
             e.stopPropagation();
             const url = `product-card.html?id=${product.id}`;
             window.location.href = url;
         });
         // Кнопка "В корзину" работает отдельно
-        productsGrid.appendChild(productCard);
+        productsGrid.appendChild(card);
         console.log(`[LOG] Карточка товара ${product.id} добавлена в DOM`);
     });
     console.log('[LOG] Все карточки товаров созданы, инициализация кнопок...');
@@ -588,7 +611,7 @@ function initAddToCartButtons() {
         const btn = card.querySelector('.add-to-cart');
         if (!btn) return;
 
-        const productId = card.dataset.id;
+        const productId = card.dataset.productId || card.dataset.id;
         if (!productId) return;
 
         let product = (window.products || []).find(p => String(p.id) === String(productId));
@@ -741,5 +764,48 @@ function updateAuthUI() {
             console.log('Пользователь не авторизован, скрываем кнопку админа');
             adminBtn.style.display = 'none';
         }
+    }
+} 
+
+// Поиск
+function initSearch() {
+    const searchInput = document.querySelector('.search-input');
+    const searchBtn = document.querySelector('.search-btn');
+
+    const performSearch = async () => {
+        const query = searchInput.value.trim();
+        if (query) {
+            await fetchSearchedProducts(query);
+        } else {
+            // Если поле поиска пустое, показываем все товары
+            await fetchAllProducts();
+        }
+    };
+
+    if (searchBtn && searchInput) {
+        searchBtn.addEventListener('click', performSearch);
+        searchInput.addEventListener('keyup', (event) => {
+            if (event.key === 'Enter') {
+                performSearch();
+            }
+        });
+    }
+}
+
+async function fetchSearchedProducts(query) {
+    console.log(`Searching for: ${query}`);
+    const productsGrid = document.querySelector('.products-grid');
+    productsGrid.innerHTML = '<p>Поиск...</p>'; // Показываем индикатор загрузки
+
+    try {
+        const response = await fetch(`/api/products/search?name=${encodeURIComponent(query)}`);
+        if (!response.ok) {
+            throw new Error(`Ошибка сети: ${response.statusText}`);
+        }
+        const products = await response.json();
+        updateProductsDisplay(products);
+    } catch (error) {
+        console.error('Ошибка при поиске товаров:', error);
+        productsGrid.innerHTML = `<p>Не удалось выполнить поиск. ${error.message}</p>`;
     }
 } 
