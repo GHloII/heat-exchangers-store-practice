@@ -9,86 +9,77 @@ document.addEventListener('DOMContentLoaded', function() {
         let total = 0;
         if (items.length === 0) {
             cartList.innerHTML = '<div style="text-align:center;color:#888;padding:2rem 0;">Корзина пуста</div>';
-            cartTotal.textContent = 'Итого: 0 ₽';
-            checkoutBtn.disabled = true;
+            if(cartTotal) cartTotal.textContent = 'Итого: 0 ₽';
+            if(checkoutBtn) checkoutBtn.disabled = true;
             return;
         }
-        checkoutBtn.disabled = false;
+        if(checkoutBtn) checkoutBtn.disabled = false;
+        
         items.forEach(item => {
             total += item.price * item.qty;
             const el = document.createElement('div');
             el.className = 'cart-item';
+            el.dataset.id = item.id; // Добавляем ID
             el.innerHTML = `
-                <div class="cart-item-img">
-                    <img src="${item.image}" alt="${item.name}">
+                <div class="cart-item-img" style="cursor:pointer;">
+                    <img src="${item.image_path || item.image}" alt="${item.name}">
                 </div>
                 <div class="cart-item-info">
-                    <div class="cart-item-title">${item.name}</div>
+                    <div class="cart-item-title" style="cursor:pointer; color:#1a73e8; text-decoration:underline;">${item.name}</div>
                     <div class="cart-item-price">${item.price.toLocaleString()} ₽</div>
                 </div>
                 <div class="cart-item-controls">
-                    <button class="cart-qty-btn" data-action="dec" data-id="${item.id}">-</button>
-                    <span class="cart-qty">${item.qty}</span>
-                    <button class="cart-qty-btn" data-action="inc" data-id="${item.id}">+</button>
-                    <button class="cart-remove-btn" data-action="remove" data-id="${item.id}" title="Удалить">×</button>
+                    <button class="product-qty-btn" data-action="dec">-</button>
+                    <span class="product-qty">${item.qty}</span>
+                    <button class="product-qty-btn" data-action="inc">+</button>
+                </div>
+                <div class="cart-item-remove">
+                     <button class="cart-remove-btn" data-action="remove" title="Удалить">×</button>
                 </div>
             `;
             cartList.appendChild(el);
         });
-        cartTotal.textContent = `Итого: ${total.toLocaleString()} ₽`;
+
+        if(cartTotal) cartTotal.textContent = `Итого: ${total.toLocaleString()} ₽`;
     }
 
     cartList.addEventListener('click', function(e) {
         const btn = e.target.closest('button');
         if (!btn) return;
         
-        const id = btn.dataset.id;
+        const card = e.target.closest('.cart-item');
+        const id = card.dataset.id;
+        const items = Cart.getItems();
+        const product = items.find(p => String(p.id) === String(id));
+
+        if (!product) return;
+
         if (btn.dataset.action === 'inc') {
-            const items = Cart.getItems();
-            const item = items.find(i => i.id === id);
-            if (item) {
-                Cart.updateQty(item.id, item.qty + 1);
-            }
-            renderCart();
-            updateCartIndicator();
+            Cart.updateQty(product.id, product.qty + 1);
         } else if (btn.dataset.action === 'dec') {
-            const items = Cart.getItems();
-            const item = items.find(i => i.id === id);
-            if (item) {
-                if (item.qty > 1) {
-                    Cart.updateQty(item.id, item.qty - 1);
-                } else {
-                    Cart.removeItem(item.id);
-                }
+            if (product.qty > 1) {
+                Cart.updateQty(product.id, product.qty - 1);
+            } else {
+                Cart.removeItem(product.id);
             }
-            renderCart();
-            updateCartIndicator();
         } else if (btn.dataset.action === 'remove') {
             Cart.removeItem(id);
-            renderCart();
-            updateCartIndicator();
+        }
+        
+        renderCart();
+        if (typeof updateCartIndicator === 'function') {
+           updateCartIndicator();
         }
     });
 
-    checkoutBtn.addEventListener('click', function() {
-        alert('Оформление заказа пока не реализовано');
-    });
-
-    // Функция обновления индикатора корзины
-    function updateCartIndicator() {
-        const indicator = document.querySelector('.cart-indicator');
-        if (!indicator) return;
-        
-        const totalItems = Cart.getTotalItems();
-        indicator.textContent = totalItems;
-        
-        if (totalItems > 0) {
-            indicator.classList.remove('hidden');
-        } else {
-            indicator.classList.add('hidden');
-        }
+    if(checkoutBtn) {
+        checkoutBtn.addEventListener('click', function() {
+            alert('Оформление заказа пока не реализовано');
+        });
     }
 
     renderCart();
-    updateCartIndicator(); // Инициализируем индикатор
+    if (typeof updateCartIndicator === 'function') {
+        updateCartIndicator();
+    }
 }); 
