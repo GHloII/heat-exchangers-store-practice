@@ -27,6 +27,7 @@ export function renderProductCard(product) {
         <div class="product-card-large-info">
             <h2>${realProduct.name}</h2>
             <div class="product-card-large-price">${realProduct.price ? realProduct.price.toLocaleString() + ' ₽' : ''}</div>
+            <div class="product-card-large-desc">${realProduct.description || ''}</div>
             <ul class="product-card-large-props">
                 ${Object.entries(realProduct)
                     .filter(([key]) => !['id', 'image', 'image_path', 'name', 'price', 'qty', 'description'].includes(key))
