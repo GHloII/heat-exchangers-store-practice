@@ -14,6 +14,10 @@ import java.util.Optional;
 public class DeviceService {
     private final DeviceRepo deviceRepo;
 
+    public Optional<Device> findById(Long id) {
+        return deviceRepo.findById(id);
+    }
+
     public List<Device> readAllDevices(){
         return deviceRepo.findAll();
     }
