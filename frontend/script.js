@@ -281,33 +281,63 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
     initAddToCartButtons();
     updateCartIndicator(); // Инициализируем индикатор корзины
+
+    // --- обработка статических карточек товара ---
+    const staticCards = document.querySelectorAll('.product-card');
+    if (staticCards.length > 0) {
+        const products = [];
+        staticCards.forEach(card => {
+            card.addEventListener('click', function(e) {
+                if (e.target.closest('.add-to-cart')) return;
+                const id = card.dataset.id;
+                if (id) {
+                    window.location.href = `product-card.html?id=${id}`;
+                }
+            });
+            // Собираем данные о товаре из DOM
+            const name = card.querySelector('h3')?.textContent || '';
+            const priceText = card.querySelector('.product-price')?.textContent || '';
+            const price = parseInt(priceText.replace(/[^\d]/g, '')) || 0;
+            const image = card.querySelector('img')?.src || '';
+            products.push({ id: card.dataset.id, name, price, image });
+        });
+        window.products = products;
+        localStorage.setItem('products', JSON.stringify(products));
+    }
+});
+
+window.addEventListener('pageshow', function(event) {
+    if (typeof updateCartIndicator === 'function') {
+        updateCartIndicator();
+    }
+    console.log('pageshow: UI синхронизирован после возврата назад');
 });
 
 async function initApp() {
     // Основная логика приложения будет здесь
     console.log('=== ИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ ===');
-    
     // Обновляем UI в зависимости от авторизации
     console.log('Обновление UI авторизации...');
     updateAuthUI();
-    
     // Мобильные фильтры
     console.log('Инициализация мобильных фильтров...');
     initMobileFilters();
-    
     // Инициализация фильтров
     console.log('Инициализация фильтров...');
     initFilters();
-    
     // Загружаем все товары при инициализации
     console.log('Загрузка товаров...');
     try {
         const products = await fetchAllProducts();
+        console.log('[LOG] fetchAllProducts вернул:', products);
+        window.products = products;
+        localStorage.setItem('products', JSON.stringify(products));
+        console.log('[LOG] Сохранил products в window и localStorage:', localStorage.getItem('products'));
         console.log('Товары успешно загружены, обновление отображения...');
         updateProductsDisplay(products);
         console.log('Приложение инициализировано успешно');
     } catch (error) {
-        console.error('Не удалось загрузить товары:', error);
+        console.error('[LOG] Не удалось загрузить товары:', error);
         // Показываем сообщение пользователю
         const productsGrid = document.querySelector('.products-grid');
         if (productsGrid) {
@@ -392,27 +422,22 @@ async function fetchFilteredProducts(filters) {
 
 // Функция для обновления отображения товаров
 function updateProductsDisplay(products) {
-    console.log('Обновление отображения товаров, количество:', products.length);
+    console.log('[LOG] updateProductsDisplay вызван, products:', products);
     const productsGrid = document.querySelector('.products-grid');
     if (!productsGrid) {
-        console.log('Контейнер товаров не найден');
+        console.log('[LOG] Контейнер товаров не найден');
         return;
     }
-
     productsGrid.innerHTML = '';
-    console.log('Контейнер товаров очищен');
-    
+    console.log('[LOG] Контейнер товаров очищен');
     products.forEach((product, index) => {
-        console.log(`Создание карточки товара ${index + 1}:`, product);
-        console.log(`Изображение для товара ${product.name}:`, product.image_path || product.image);
-        
+        console.log(`[LOG] Создание карточки товара ${index + 1}:`, product);
         const productCard = document.createElement('div');
         productCard.className = 'product-card';
         productCard.dataset.id = product.id;
-        
         productCard.innerHTML = `
             <div class="product-image">
-                <img src="${product.image_path || product.image}" alt="${product.name}" onload="console.log('Изображение загружено:', '${product.name}')" onerror="console.log('Ошибка загрузки изображения:', '${product.name}', 'URL:', '${product.image_path || product.image}')">
+                <img src="${product.image_path || product.image}" alt="${product.name}">
             </div>
             <div class="product-info">
                 <h3>${product.name}</h3>
@@ -420,13 +445,19 @@ function updateProductsDisplay(products) {
                 <button class="add-to-cart">В корзину</button>
             </div>
         `;
-        
+        productCard.addEventListener('click', function(e) {
+            if (e.target.closest('.add-to-cart')) return;
+            const url = `product-card.html?id=${product.id}`;
+            console.log(`[LOG] Клик по карточке товара: ${product.id}, переход на:`, url);
+            window.location.href = url;
+        });
         productsGrid.appendChild(productCard);
+        console.log(`[LOG] Карточка товара ${product.id} добавлена в DOM`);
     });
-
-    console.log('Все карточки товаров созданы, инициализация кнопок...');
-    // Переинициализируем кнопки добавления в корзину
+    console.log('[LOG] Все карточки товаров созданы, инициализация кнопок...');
     initAddToCartButtons();
+    // Проверим, что карточки реально в DOM
+    console.log('[LOG] Количество .product-card в DOM:', document.querySelectorAll('.product-card').length);
 }
 
 function initFilters() {

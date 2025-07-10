@@ -19,11 +19,11 @@ document.addEventListener('DOMContentLoaded', function() {
             const el = document.createElement('div');
             el.className = 'cart-item';
             el.innerHTML = `
-                <div class="cart-item-img">
+                <div class="cart-item-img" style="cursor:pointer;">
                     <img src="${item.image}" alt="${item.name}">
                 </div>
                 <div class="cart-item-info">
-                    <div class="cart-item-title">${item.name}</div>
+                    <div class="cart-item-title" style="cursor:pointer; color:#1a73e8; text-decoration:underline;">${item.name}</div>
                     <div class="cart-item-price">${item.price.toLocaleString()} ₽</div>
                 </div>
                 <div class="cart-item-controls">
@@ -33,6 +33,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     <button class="cart-remove-btn" data-action="remove" data-id="${item.id}" title="Удалить">×</button>
                 </div>
             `;
+            // Клик по картинке или названию — переход на карточку товара
+            el.querySelector('.cart-item-img').addEventListener('click', function() {
+                window.location.href = `product-card.html?id=${item.id}`;
+            });
+            el.querySelector('.cart-item-title').addEventListener('click', function() {
+                window.location.href = `product-card.html?id=${item.id}`;
+            });
             cartList.appendChild(el);
         });
         cartTotal.textContent = `Итого: ${total.toLocaleString()} ₽`;

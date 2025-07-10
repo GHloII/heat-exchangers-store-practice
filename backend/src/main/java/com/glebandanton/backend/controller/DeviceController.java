@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
@@ -70,6 +71,8 @@ public class DeviceController {
         List<Device> devices = deviceRepository.findAll(spec);
         return ResponseEntity.ok(devices);
     }
+
+ 
 
 //    // Дополнительный GET endpoint для тестирования
 //    @GetMapping
