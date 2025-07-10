@@ -10,7 +10,9 @@ import lombok.Data;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
 import org.springframework.web.bind.annotation.*;
+
 
 import java.util.List;
 
@@ -67,8 +69,10 @@ public class DeviceController {
         return ResponseEntity.ok(devices);
     }
 
+
     @PostMapping("/search")
     public List<Device> searchDevices(@RequestBody DeviceSearchRequest request) {
         return deviceService.searchDevicesByName(request.getName());
     }
+
 }

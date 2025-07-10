@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -42,5 +43,9 @@ public class DeviceService {
         } else {
             throw new RuntimeException("Device not found with id: " + id);
         }
+    }
+
+    public Optional<Device> readDeviceById(Long id) {
+        return deviceService.findById(id);
     }
 }
