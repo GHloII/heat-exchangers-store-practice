@@ -18,13 +18,9 @@ import java.util.List;
 public class AdminController {
     private final DeviceService deviceService;
 
-    public AdminController(DeviceService deviceService) {
-        this.deviceService = deviceService;
-    }
-
     // Добавление нового товара
-    @PostMapping("/products")
-    public ResponseEntity<?> addProduct(@RequestBody Device device) {
+    @PostMapping("/save_device")
+    public ResponseEntity<?> addDevice(@RequestBody Device device) {
         try {
             System.out.println("=== ADMIN: ADDING NEW PRODUCT ===");
             Device savedDevice = deviceService.saveDevice(device);
@@ -38,7 +34,7 @@ public class AdminController {
     }
 
     // Обновление товара
-    @PutMapping("/products/{id}")
+    @PutMapping("/update_device/{id}")
     public ResponseEntity<?> updateProduct(@PathVariable Long id, @RequestBody Device device) {
         try {
             System.out.println("=== ADMIN: UPDATING PRODUCT " + id + " ===");
@@ -54,7 +50,7 @@ public class AdminController {
     }
 
     // Удаление товара
-    @DeleteMapping("/products/{id}")
+    @DeleteMapping("/delete_device/{id}")
     public ResponseEntity<?> deleteProduct(@PathVariable Long id) {
         try {
             System.out.println("=== ADMIN: DELETING PRODUCT " + id + " ===");
@@ -69,12 +65,15 @@ public class AdminController {
     }
 
     // Получение всех товаров (для админа)
-    @GetMapping("/products")
+    @GetMapping("/all_devices")
     public ResponseEntity<?> getAllProducts() {
         try {
             System.out.println("=== ADMIN: GETTING ALL PRODUCTS ===");
+
             List<Device> devices = deviceService.readAllDevices();
+
             System.out.println("Found " + devices.size() + " devices");
+
             return ResponseEntity.ok(devices);
         } catch (Exception e) {
             System.out.println("Error getting products: " + e.getMessage());
