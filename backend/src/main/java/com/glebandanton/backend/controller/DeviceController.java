@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 import java.util.List;
+import java.util.Optional;
 
 @Data
 @RestController
@@ -75,4 +76,10 @@ public class DeviceController {
         return deviceService.searchDevicesByName(request.getName());
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<?> findById(@PathVariable Long id) {
+        Optional<Device> record = deviceService.findById(id);
+        return record.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
 }
