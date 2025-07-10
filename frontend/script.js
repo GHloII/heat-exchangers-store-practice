@@ -159,10 +159,11 @@ document.addEventListener('DOMContentLoaded', async function() {
                 valid = false;
             }
             if (valid) {
+                const submitBtn = loginForm.querySelector('button[type="submit"]');
+                const originalText = submitBtn.textContent;
+                
                 try {
                     // Показываем индикатор загрузки
-                    const submitBtn = loginForm.querySelector('button[type="submit"]');
-                    const originalText = submitBtn.textContent;
                     submitBtn.textContent = 'Вход...';
                     submitBtn.disabled = true;
 
@@ -184,7 +185,6 @@ document.addEventListener('DOMContentLoaded', async function() {
                     alert('Ошибка входа: ' + error.message);
                 } finally {
                     // Восстанавливаем кнопку
-                    const submitBtn = loginForm.querySelector('button[type="submit"]');
                     submitBtn.textContent = originalText;
                     submitBtn.disabled = false;
                 }
