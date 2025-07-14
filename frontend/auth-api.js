@@ -113,4 +113,44 @@ class AuthAPI {
         const userInfo = this.getUserInfo();
         return userInfo ? userInfo.role : null;
     }
+
+    /**
+     * Экспортирует массив объектов в CSV файл.
+     * @param {Array<Object>} data - Массив данных для экспорта.
+     * @param {string} filename - Имя CSV файла.
+     */
+    static exportToCSV(data, filename = 'export.csv') {
+        if (!data || data.length === 0) {
+            alert('Нет данных для экспорта.');
+            return;
+        }
+
+        const delimiter = ';'; // Используем точку с запятой для Excel
+        const headers = Object.keys(data[0]);
+        const csvRows = [headers.join(delimiter)];
+
+        for (const row of data) {
+            const values = headers.map(header => {
+                // Экранируем кавычки, удваивая их, и оборачиваем все в кавычки
+                const escaped = ('' + row[header]).replace(/"/g, '""');
+                return `"${escaped}"`;
+            });
+            csvRows.push(values.join(delimiter));
+        }
+
+        const csvString = csvRows.join('\r\n'); // Используем CRLF для лучшей совместимости
+        const bom = '\uFEFF'; // Добавляем BOM для корректной работы с кириллицей в Excel
+        const blob = new Blob([bom + csvString], { type: 'text/csv;charset=utf-8;' });
+
+        const link = document.createElement('a');
+        if (link.download !== undefined) {
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', filename);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    }
 } 
