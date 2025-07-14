@@ -6,7 +6,7 @@ import com.glebandanton.backend.request.DeviceFilterRequest;
 import com.glebandanton.backend.request.DeviceSearchRequest;
 import com.glebandanton.backend.service.DeviceService;
 import com.glebandanton.backend.specification.DeviceSpecifications;
-import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,13 +17,12 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
-@Data
 @RestController
 @RequestMapping("/api/products")
 @CrossOrigin(origins = "*")
+@RequiredArgsConstructor
 public class DeviceController {
     private final DeviceService deviceService;
-    private final DeviceRepo deviceRepository;
 
     @GetMapping
     public ResponseEntity<?> getAllProducts() {
@@ -65,16 +64,20 @@ public class DeviceController {
 
     @PostMapping("/filter")
     public ResponseEntity<List<Device>> filterDevices(@RequestBody DeviceFilterRequest filter) {
-        Specification<Device> spec = DeviceSpecifications.withFilter(filter);
-        List<Device> devices = deviceRepository.findAll(spec);
+        List<Device> devices = deviceService.filterDevices(filter);
         return ResponseEntity.ok(devices);
     }
 
 
-    @PostMapping("/search")
-    public List<Device> searchDevices(@RequestBody DeviceSearchRequest request) {
-        return deviceService.searchDevicesByName(request.getName());
+    @GetMapping("/search")
+    public ResponseEntity<List<Device>> searchDevicesByName(@RequestParam String name) {
+        return ResponseEntity.ok(deviceService.searchDevicesByName(name));
     }
+
+    // @PostMapping("/search")
+    // public List<Device> searchDevices(@RequestBody DeviceSearchRequest request) {
+    //     return deviceService.searchDevicesByName(request.getName());
+    // }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> findById(@PathVariable Long id) {
