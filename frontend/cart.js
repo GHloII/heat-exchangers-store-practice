@@ -82,4 +82,23 @@ document.addEventListener('DOMContentLoaded', function() {
     if (typeof updateCartIndicator === 'function') {
         updateCartIndicator();
     }
+
+    const exportBtn = document.getElementById('exportCartCsv');
+    if (exportBtn) {
+        exportBtn.addEventListener('click', () => {
+            const cartItems = Cart.getItems();
+            if (cartItems.length === 0) {
+                alert('Корзина пуста. Нечего экспортировать.');
+                return;
+            }
+            // Выбираем нужные поля для экспорта
+            const exportData = cartItems.map(item => ({
+                id: item.id,
+                name: item.name,
+                price: item.price,
+                quantity: item.qty
+            }));
+            AuthAPI.exportToCSV(exportData, 'cart-items.csv');
+        });
+    }
 }); 

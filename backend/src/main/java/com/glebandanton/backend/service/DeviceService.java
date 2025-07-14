@@ -2,7 +2,10 @@ package com.glebandanton.backend.service;
 
 import com.glebandanton.backend.model.Device;
 import com.glebandanton.backend.repository.DeviceRepo;
+import com.glebandanton.backend.request.DeviceFilterRequest;
+import com.glebandanton.backend.specification.DeviceSpecifications;
 import lombok.AllArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -31,6 +34,11 @@ public class DeviceService {
             return Collections.emptyList();
         }
         return deviceRepo.findByNameContainingIgnoreCase(name);
+    }
+
+    public List<Device> filterDevices(DeviceFilterRequest filter) {
+        Specification<Device> spec = DeviceSpecifications.withFilter(filter);
+        return deviceRepo.findAll(spec);
     }
 
     public Device updateDevice(Device device) {

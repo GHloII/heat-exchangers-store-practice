@@ -16,14 +16,15 @@ public class JwtProvider {
     static SecretKey key = Keys.hmacShaKeyFor(JwtConstant.SECRETE_KEY.getBytes());
 
     public static String generateToken(Authentication auth){
-//        //Получаем роли из Authentication
-//        List<String> roles = auth.getAuthorities().stream()
-//                .map(GrantedAuthority::getAuthority)
-//                .collect(Collectors.toList());
+        //Получаем роли из Authentication
+        List<String> roles = auth.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList());
 
         return Jwts.builder().setIssuedAt(new Date())
                 .setExpiration(new Date(new Date().getTime() + 86400000))
                 .claim("email", auth.getName())
+                .claim("roles", roles)
                 .signWith(key)
                 .compact();
     }
