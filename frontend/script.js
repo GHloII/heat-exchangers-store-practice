@@ -498,7 +498,7 @@ function updateProductsDisplay(products) {
         console.log(`[LOG] Карточка товара ${product.id} добавлена в DOM`);
     });
     console.log('[LOG] Все карточки товаров созданы, инициализация кнопок...');
-    initAddToCartButtons();
+    initAddToCartButtons(products);
     // Проверим, что карточки реально в DOM
     console.log('[LOG] Количество .product-card в DOM:', document.querySelectorAll('.product-card').length);
 }
@@ -605,8 +605,10 @@ function formatPrice(price) {
 }
 
 // Добавление товара в корзину из магазина
-function initAddToCartButtons() {
+function initAddToCartButtons(productsList) {
     console.log('Инициализация кнопок добавления в корзину');
+    const sourceProducts = productsList || window.products || [];
+
     document.querySelectorAll('.product-card, .product-card-large').forEach((card) => {
         const btn = card.querySelector('.add-to-cart');
         if (!btn) return;
@@ -614,7 +616,7 @@ function initAddToCartButtons() {
         const productId = card.dataset.productId || card.dataset.id;
         if (!productId) return;
 
-        let product = (window.products || []).find(p => String(p.id) === String(productId));
+        let product = sourceProducts.find(p => String(p.id) === String(productId));
         
         if (!product && window.currentProduct && String(window.currentProduct.id) === String(productId)) {
             product = window.currentProduct;
